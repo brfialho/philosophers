@@ -6,12 +6,44 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/02 11:49:46 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/02 12:31:56 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
+
+# ifndef TRUE
+#  define TRUE 1
+# endif
+
+# ifndef FALSE
+#  define FALSE 0
+# endif
+
+# ifndef ERROR
+#  define ERROR -1
+# endif
+
+# ifndef PHILO
+#  define PHILO 0
+# endif
+
+# ifndef STARVE
+#  define STARVE 1
+# endif
+
+# ifndef EAT
+#  define EAT 3
+# endif
+
+# ifndef SLEEP
+#  define SLEEP 4
+# endif
+
+# ifndef FULL
+#  define FULL 5
+# endif
 
 #include <stdio.h>
 #include <stdlib.h>
