@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/02 12:45:13 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/04 14:58:51 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ long	philo_atol(char *s)
 		if (!(*s >= '0' && *s <= '9'))
 			return (ERROR);
 		sum = sum * 10 + *s++ - '0';
+		if (sum > 2147483647)
+			return (ERROR);
 	}
 	return (sum);
 }

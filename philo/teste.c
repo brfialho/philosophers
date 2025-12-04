@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 17:02:21 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/02 18:07:23 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/04 14:50:36 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,14 @@ void* foo(void* arg)
     static int i = 0;
     pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-    pthread_mutex_lock(&mutex);    
+    pthread_mutex_lock(&mutex);
     printf("Created a new thread: %d\n", i++);
     pthread_mutex_unlock(&mutex);
     return NULL;
- }
+}
 
-int main() {
+int main()
+{
     
     // Create a pthread_t variable to store
     // thread ID

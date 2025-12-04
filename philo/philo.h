@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/02 12:31:56 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/04 14:59:23 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,10 @@
 
 # ifndef FULL
 #  define FULL 5
+# endif
+
+# ifndef INT_MAX
+#  define INT_MAX 2147483647
 # endif
 
 #include <stdio.h>
