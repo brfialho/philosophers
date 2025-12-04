@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/04 17:36:24 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/04 19:51:52 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-	t_philo *philo;
 	long	input[5];
+	t_philo philo[];
 }	t_table;
 
 #endif

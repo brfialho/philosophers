@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/04 17:35:36 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/04 20:33:36 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,26 +59,34 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (array);
 }
 
-// int	init_philos(t_table *table)
-// {
-// 	int	i;
+t_table	*init_table(int argc, char **argv)
+{
+	t_table	*table;
+	long	input[5];
+	int		i;
 
-// 	table->philo = ft_calloc(table->input[PHILO] + 1, sizeof(t_philo));
-// 	if (!table->philo)
-// 		return (FALSE);
-// 	return (TRUE);
-// }
+	if (!validate_input(input, argc, ++argv))
+		return (printf("Invalid Input.\n"), NULL);
+	table = ft_calloc(1, sizeof(t_table) + sizeof(t_philo) * input[0]);
+	if (!table)
+		return (printf("Memory Error.\n"), NULL);
+	i = -1;
+	while (++i < 5)
+		table->input[i] = input[i];
+	return (table);
+}
 
 int main(int argc, char **argv)
 {
-	t_table table;
+	t_table *table;
 
-	if (!validate_input(table.input, argc, ++argv))
-		return (printf("Invalid Input\n"));
+	table = init_table(argc, argv);
+	if (!table)
+		return (ERROR);
+
 	for (int i = 0; i < 5; i++)
-		printf("%ld\n", table.input[i]);
-	// if (!init_philos(&table))
-	// 	return (printf("Memory Error\n"));
-
+		printf("%ld\n", table->input[i]);
 	printf("Só sei que nada sei\n");
+
+	free(table);
 }
