@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/06 18:18:03 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:42:49 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,14 @@ t_table	*init_table(int argc, char **argv)
 	return (table);
 }
 
+void	print_philo(t_philo *philo)
+{
+	printf("CRIOU O %d\n", philo->id);
+}
+
 void	*routine(void *philo)
 {
-	printf("CRIOU O %d\n", ((t_philo *)philo)->id);
+	print_philo((t_philo *)philo);
 	return (philo);
 }
 
