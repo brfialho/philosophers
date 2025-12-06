@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/06 18:12:38 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:16:51 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@
 typedef struct s_table t_table;
 typedef struct s_philo
 {
+	int				id;
 	pthread_t		thread;
 	pthread_mutex_t fork;
 	unsigned char	is_alive;
