@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/06 17:31:51 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:12:59 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,11 @@ t_table	*init_table(int argc, char **argv)
 		table->input[i] = input[i];
 	i = -1;
 	while (++i < input[PHILO])
+	{
 		if (pthread_mutex_init(&table->philo[i].fork, NULL))
 			free_all(table, i);
+		table->philo[i].table = table;
+	}
 	return (table);
 }
 
@@ -102,7 +105,10 @@ void	init_threads(t_table *table)
 
 	i = -1;
 	while (++i < table->input[PHILO])
+	{
 		pthread_create(&table->philo[i].thread, NULL, routine, table);
+		pthread_detach(table->philo[i].thread);
+	}
 }
 
 
@@ -121,5 +127,6 @@ int main(int argc, char **argv)
 	init_threads(table);
 
 	sleep(3);
+
 	free_all(table, table->input[PHILO]);
 }

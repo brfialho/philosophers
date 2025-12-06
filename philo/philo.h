@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/04 19:51:52 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:12:38 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,13 @@
 #  define INT_MAX 2147483647
 # endif
 
+typedef struct s_table t_table;
 typedef struct s_philo
 {
 	pthread_t		thread;
 	pthread_mutex_t fork;
 	unsigned char	is_alive;
+	t_table			*table;
 }	t_philo;
 
 typedef struct s_table
