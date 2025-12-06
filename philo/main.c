@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/04 20:33:36 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/06 17:16:47 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,16 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (array);
 }
 
+void	free_all(t_table *table, int m_count)
+{
+	int	i;
+
+	i = -1;
+	while (++i < m_count)
+		pthread_mutex_destroy(&table->philo[i].fork);
+	free(table);
+}
+
 t_table	*init_table(int argc, char **argv)
 {
 	t_table	*table;
@@ -67,12 +77,16 @@ t_table	*init_table(int argc, char **argv)
 
 	if (!validate_input(input, argc, ++argv))
 		return (printf("Invalid Input.\n"), NULL);
-	table = ft_calloc(1, sizeof(t_table) + sizeof(t_philo) * input[0]);
+	table = ft_calloc(1, sizeof(t_table) + sizeof(t_philo) * input[PHILO]);
 	if (!table)
-		return (printf("Memory Error.\n"), NULL);
+		return (printf("Malloc Error.\n"), NULL);
 	i = -1;
 	while (++i < 5)
 		table->input[i] = input[i];
+	i = -1;
+	while (++i < input[PHILO])
+		if (pthread_mutex_init(&table->philo[i].fork, NULL))
+			free_all(table, i);
 	return (table);
 }
 
@@ -88,5 +102,5 @@ int main(int argc, char **argv)
 		printf("%ld\n", table->input[i]);
 	printf("Só sei que nada sei\n");
 
-	free(table);
+	free_all(table, table->input[PHILO]);
 }
