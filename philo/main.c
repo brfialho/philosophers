@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/06 17:16:47 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/06 17:31:51 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,22 @@ t_table	*init_table(int argc, char **argv)
 	return (table);
 }
 
+void	*routine(void *table)
+{
+	printf("CRIOU\n");
+	return (table);
+}
+
+void	init_threads(t_table *table)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->input[PHILO])
+		pthread_create(&table->philo[i].thread, NULL, routine, table);
+}
+
+
 int main(int argc, char **argv)
 {
 	t_table *table;
@@ -98,9 +114,12 @@ int main(int argc, char **argv)
 	if (!table)
 		return (ERROR);
 
-	for (int i = 0; i < 5; i++)
-		printf("%ld\n", table->input[i]);
-	printf("Só sei que nada sei\n");
+	// for (int i = 0; i < 5; i++)
+	// 	printf("%ld\n", table->input[i]);
+	// printf("Só sei que nada sei\n");
 
+	init_threads(table);
+
+	sleep(3);
 	free_all(table, table->input[PHILO]);
 }
