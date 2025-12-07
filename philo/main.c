@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/06 21:12:17 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/07 19:01:33 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (array);
 }
 
-void	free_all(t_table *table, int m_count, char print)
+void	free_all(t_table *table, int m_count, char print, char monitor)
 {
 	int	i;
 
@@ -68,6 +68,8 @@ void	free_all(t_table *table, int m_count, char print)
 		pthread_mutex_destroy(&table->philo[i].fork);
 	if (print)
 		pthread_mutex_destroy(&table->print);
+	if (monitor)
+		pthread_mutex_destroy(&table->monitor);
 	free(table);
 }
 
@@ -79,12 +81,14 @@ t_table	*init_mutex(t_table *table)
 	while (++i < table->input[PHILO])
 	{
 		if (pthread_mutex_init(&table->philo[i].fork, NULL))
-			return (free_all(table, i, FALSE), NULL);
+			return (free_all(table, i, FALSE, FALSE), NULL);
 		table->philo[i].id = i;
 		table->philo[i].table = table;
 	}
 	if (pthread_mutex_init(&table->print, NULL))
-		return (free_all(table, i, FALSE), NULL);
+		return (free_all(table, i, FALSE, FALSE), NULL);
+	if (pthread_mutex_init(&table->monitor, NULL))
+		return (free_all(table, i, TRUE, FALSE), NULL);
 	return (table);
 }
 
@@ -103,21 +107,54 @@ t_table	*init_table(int argc, char **argv)
 	while (++i < 5)
 		table->input[i] = input[i];
 	if (!init_mutex(table))	
-		return (NULL);
+		return (printf("Mutex Allocantion Error.\n"), NULL);
 	return (table);
 }
 
 void	print_philo(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->print);
-	printf("CRIOU O %d\n", philo->id);
+	printf("PHILO: %d COMEU: %d\n", philo->id, philo->eaten);
 	pthread_mutex_unlock(&philo->table->print);
+}
+
+char	is_end(t_table *table)
+{
+	pthread_mutex_lock(&table->monitor);
+	if (table->end)
+		return (pthread_mutex_unlock(&table->monitor), TRUE);
+	return (pthread_mutex_unlock(&table->monitor), FALSE);
+}
+
+void	die(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->table->monitor);
+	philo->is_dead = TRUE;
+	pthread_mutex_unlock(&philo->table->monitor);
 }
 
 void	*routine(void *philo)
 {
-	print_philo((t_philo *)philo);
-	return (philo);
+	t_philo *p = (t_philo *)philo;
+	// if (p->id % 1)
+		//usleep((p->table->input[EAT] * 1000) / p->table->input[PHILO]);
+	while (!is_end(p->table))
+	{
+		usleep(5 * 1000);
+		if (is_end(p->table))
+			return (p);
+		p->eaten++;
+		usleep(5 * 1000);
+		if (is_end(p->table))
+			return (p);
+		print_philo(p);
+		if (p->eaten == 30)
+			return (die(p), p);
+		usleep(5 * 1000);
+		if (is_end(p->table))
+			return (p);
+	}
+	return (p);
 }
 
 void	init_threads(t_table *table)
@@ -131,7 +168,28 @@ void	init_threads(t_table *table)
 		pthread_detach(table->philo[i].thread);
 	}
 }
+void	monitor(t_table *table)
+{
+	int	i;
+	int loop;
 
+	loop = TRUE;
+	while (loop)
+	{
+		i = -1;
+		pthread_mutex_lock(&table->monitor);
+		while (++i < table->input[PHILO])
+		{
+			if (table->philo[i].is_dead)
+			{
+				table->end = TRUE;
+				loop = FALSE;
+			}
+		}
+		pthread_mutex_unlock(&table->monitor);
+		usleep(1 * 1000);
+	}
+}
 
 int main(int argc, char **argv)
 {
@@ -146,8 +204,25 @@ int main(int argc, char **argv)
 	// printf("Só sei que nada sei\n");
 
 	init_threads(table);
-
+	monitor(table);
 	sleep(3);
+	for (int i = 0; i < table->input[PHILO]; i++)
+		if (table->philo[i].is_dead)
+			printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
 
-	free_all(table, table->input[PHILO], TRUE);
+	free_all(table, table->input[PHILO], TRUE, TRUE);
 }
+
+
+// init all
+// check every 10 ms for philo death
+	// if dead change boolean
+	// wait for threads to clean up
+
+	
+//if par go to eat
+//while
+//	think
+//	eat
+//  sleep
+//
