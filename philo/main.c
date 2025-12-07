@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/06 20:42:49 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/06 21:09:19 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,33 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (array);
 }
 
-void	free_all(t_table *table, int m_count)
+void	free_all(t_table *table, int m_count, char print)
 {
 	int	i;
 
 	i = -1;
 	while (++i < m_count)
 		pthread_mutex_destroy(&table->philo[i].fork);
+	if (print)
+		pthread_mutex_destroy(&table->print);
 	free(table);
+}
+
+t_table	*init_mutex(t_table *table)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->input[PHILO])
+	{
+		if (pthread_mutex_init(&table->philo[i].fork, NULL))
+			return (free_all(table, i, FALSE), NULL);
+		table->philo[i].id = i;
+		table->philo[i].table = table;
+	}
+	if (pthread_mutex_init(&table->print, NULL))
+		return (free_all(table, i, FALSE), NULL);
+	return (table);
 }
 
 t_table	*init_table(int argc, char **argv)
@@ -83,14 +102,8 @@ t_table	*init_table(int argc, char **argv)
 	i = -1;
 	while (++i < 5)
 		table->input[i] = input[i];
-	i = -1;
-	while (++i < input[PHILO])
-	{
-		if (pthread_mutex_init(&table->philo[i].fork, NULL))
-			free_all(table, i);
-		table->philo[i].id = i;
-		table->philo[i].table = table;
-	}
+	if (!init_mutex(table))	
+		return (NULL);
 	return (table);
 }
 
@@ -134,5 +147,5 @@ int main(int argc, char **argv)
 
 	sleep(3);
 
-	free_all(table, table->input[PHILO]);
+	free_all(table, table->input[PHILO], TRUE);
 }
