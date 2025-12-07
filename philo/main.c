@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/07 19:01:33 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/07 19:04:15 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 	monitor(table);
 	sleep(3);
 	for (int i = 0; i < table->input[PHILO]; i++)
-		if (table->philo[i].is_dead)
+		if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
 			printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
 
 	free_all(table, table->input[PHILO], TRUE, TRUE);
