@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/06 21:09:19 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/06 21:12:17 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,9 @@ t_table	*init_table(int argc, char **argv)
 
 void	print_philo(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->table->print);
 	printf("CRIOU O %d\n", philo->id);
+	pthread_mutex_unlock(&philo->table->print);
 }
 
 void	*routine(void *philo)
