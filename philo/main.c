@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/07 19:04:15 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/07 19:34:37 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,8 @@ void	die(t_philo *philo)
 	pthread_mutex_unlock(&philo->table->monitor);
 }
 
+
+
 void	*routine(void *philo)
 {
 	t_philo *p = (t_philo *)philo;
@@ -142,19 +144,19 @@ void	*routine(void *philo)
 	{
 		usleep(5 * 1000);
 		if (is_end(p->table))
-			return (p);
+			return (printf("%d exiting\n", p->id), p);
 		p->eaten++;
 		usleep(5 * 1000);
 		if (is_end(p->table))
-			return (p);
+			return (printf("%d exiting\n", p->id), p);
 		print_philo(p);
 		if (p->eaten == 30)
-			return (die(p), p);
+			return (printf("%d exiting\n", p->id), die(p), p);
 		usleep(5 * 1000);
 		if (is_end(p->table))
-			return (p);
+			return (printf("%d exiting\n", p->id), p);
 	}
-	return (p);
+	return (printf("%d exiting\n", p->id), p);
 }
 
 void	init_threads(t_table *table)
@@ -206,9 +208,9 @@ int main(int argc, char **argv)
 	init_threads(table);
 	monitor(table);
 	sleep(3);
-	for (int i = 0; i < table->input[PHILO]; i++)
-		if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
-			printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
+	// for (int i = 0; i < table->input[PHILO]; i++)
+	// 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
+	// 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
 
 	free_all(table, table->input[PHILO], TRUE, TRUE);
 }

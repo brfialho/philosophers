@@ -1,4 +1,4 @@
-CC= cc -Werror -Wextra -Wall -I.
+CC= cc -Werror -Wextra -Wall -I. -g3
 
 SRC= main.c
 
