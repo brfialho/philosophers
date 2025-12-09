@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/09 18:14:11 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/09 18:20:23 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,11 +138,12 @@ char	is_end(t_table *table)
 	return (pthread_mutex_unlock(&table->monitor), FALSE);
 }
 
-void	die(t_philo *philo)
+void	philo_die(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->monitor);
 	philo->is_dead = TRUE;
 	pthread_mutex_unlock(&philo->table->monitor);
+	print_philo(philo, "died\n");
 }
 
 void	philo_sleep(t_philo *philo)
@@ -155,6 +156,7 @@ void	philo_eat(t_philo *philo)
 {
 	print_philo(philo, "is eating\n");
 	philo->eaten++;
+	usleep(philo->table->input[EAT] * 1000);
 }
 
 void	*routine(void *philo)
@@ -168,8 +170,8 @@ void	*routine(void *philo)
 		if (is_end(p->table))
 			return (p);
 		philo_eat(philo);
-		if (p->eaten == 30)
-			return (die(p), p);
+		if (p->eaten == 10)
+			return (philo_die(p), p);
 		if (is_end(p->table))
 			return (p);
 	}
@@ -228,9 +230,9 @@ int main(int argc, char **argv)
 	init_threads(table);
 	monitor(table);
 	kill_threads(table);
-	for (int i = 0; i < table->input[PHILO]; i++)
-		if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
-			printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
+	// for (int i = 0; i < table->input[PHILO]; i++)
+	// 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
+	// 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
 	free_all(table, table->input[PHILO], TRUE, TRUE);
 }
 
