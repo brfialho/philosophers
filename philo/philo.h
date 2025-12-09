@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/07 18:11:45 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/09 17:52:22 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct s_philo
 
 typedef struct s_table
 {
+	struct timeval	start;
 	char			end;
 	pthread_mutex_t monitor;
 	pthread_mutex_t print;

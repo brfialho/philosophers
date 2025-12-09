@@ -6,11 +6,22 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/09 17:15:26 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/09 18:00:48 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+long	get_time(t_table *table)
+{
+	struct timeval	now;
+	long			delta_time;
+
+	gettimeofday(&now, NULL);
+	delta_time = (now.tv_sec - table->start.tv_sec) * 1000000 \
+					+ now.tv_usec - table->start.tv_usec;
+	return (delta_time / 1000);
+}
 
 long	philo_atol(char *s)
 {
@@ -108,13 +119,14 @@ t_table	*init_table(int argc, char **argv)
 		table->input[i] = input[i];
 	if (!init_mutex(table))	
 		return (printf("Mutex Allocantion Error.\n"), NULL);
+	gettimeofday(&table->start, NULL);
 	return (table);
 }
 
 void	print_philo(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->print);
-	printf("PHILO: %d COMEU: %d\n", philo->id, philo->eaten);
+	// printf("PHILO: %d COMEU: %d\n", philo->id, philo->eaten);
 	pthread_mutex_unlock(&philo->table->print);
 }
 
@@ -133,7 +145,10 @@ void	die(t_philo *philo)
 	pthread_mutex_unlock(&philo->table->monitor);
 }
 
-
+// void	sleep(t_table *table)
+// {
+// 	 return ;
+// }
 
 void	*routine(void *philo)
 {
@@ -176,6 +191,7 @@ void	kill_threads(t_table *table)
 	while (++i < table->input[PHILO])
 		pthread_join(table->philo[i].thread, NULL);
 }
+
 void	monitor(t_table *table)
 {
 	int	i;
@@ -192,10 +208,11 @@ void	monitor(t_table *table)
 			{
 				table->end = TRUE;
 				loop = FALSE;
+				break;
 			}
 		}
 		pthread_mutex_unlock(&table->monitor);
-		usleep(1 * 1000);
+		usleep(10 * 1000);
 	}
 }
 
@@ -206,13 +223,13 @@ int main(int argc, char **argv)
 	table = init_table(argc, argv);
 	if (!table)
 		return (ERROR);
-	init_threads(table);
-	monitor(table);
-	kill_threads(table);
-	for (int i = 0; i < table->input[PHILO]; i++)
-		if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
-			printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
-	free_all(table, table->input[PHILO], TRUE, TRUE);
+	// init_threads(table);
+	// monitor(table);
+	// kill_threads(table);
+	// for (int i = 0; i < table->input[PHILO]; i++)
+	// 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
+	// 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
+	// free_all(table, table->input[PHILO], TRUE, TRUE);
 }
 
 
