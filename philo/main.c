@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/07 19:34:37 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/09 17:15:26 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,21 +142,21 @@ void	*routine(void *philo)
 		//usleep((p->table->input[EAT] * 1000) / p->table->input[PHILO]);
 	while (!is_end(p->table))
 	{
-		usleep(5 * 1000);
+		// usleep(5 * 1000);
 		if (is_end(p->table))
-			return (printf("%d exiting\n", p->id), p);
+			return (p);
 		p->eaten++;
-		usleep(5 * 1000);
+		// usleep(5 * 1000);
 		if (is_end(p->table))
-			return (printf("%d exiting\n", p->id), p);
+			return (p);
 		print_philo(p);
 		if (p->eaten == 30)
-			return (printf("%d exiting\n", p->id), die(p), p);
-		usleep(5 * 1000);
+			return (die(p), p);
+		// usleep(5 * 1000);
 		if (is_end(p->table))
-			return (printf("%d exiting\n", p->id), p);
+			return (p);
 	}
-	return (printf("%d exiting\n", p->id), p);
+	return (p);
 }
 
 void	init_threads(t_table *table)
@@ -165,10 +165,16 @@ void	init_threads(t_table *table)
 
 	i = -1;
 	while (++i < table->input[PHILO])
-	{
 		pthread_create(&table->philo[i].thread, NULL, routine, &table->philo[i]);
-		pthread_detach(table->philo[i].thread);
-	}
+}
+
+void	kill_threads(t_table *table)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->input[PHILO])
+		pthread_join(table->philo[i].thread, NULL);
 }
 void	monitor(t_table *table)
 {
@@ -200,18 +206,12 @@ int main(int argc, char **argv)
 	table = init_table(argc, argv);
 	if (!table)
 		return (ERROR);
-
-	// for (int i = 0; i < 5; i++)
-	// 	printf("%ld\n", table->input[i]);
-	// printf("Só sei que nada sei\n");
-
 	init_threads(table);
 	monitor(table);
-	sleep(3);
-	// for (int i = 0; i < table->input[PHILO]; i++)
-	// 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
-	// 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
-
+	kill_threads(table);
+	for (int i = 0; i < table->input[PHILO]; i++)
+		if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
+			printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
 	free_all(table, table->input[PHILO], TRUE, TRUE);
 }
 
