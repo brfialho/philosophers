@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/09 18:20:23 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/09 18:26:17 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,12 +166,12 @@ void	*routine(void *philo)
 	// 	usleep((p->table->input[EAT] * 1000) / p->table->input[PHILO]);
 	while (!is_end(p->table))
 	{
-		philo_sleep(philo);
+		philo_eat(philo);
 		if (is_end(p->table))
 			return (p);
-		philo_eat(philo);
 		if (p->eaten == 10)
 			return (philo_die(p), p);
+		philo_sleep(philo);
 		if (is_end(p->table))
 			return (p);
 	}
