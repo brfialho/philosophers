@@ -6,12 +6,31 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/09 18:26:17 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/09 18:57:19 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+unsigned int create_seed_from_args(int argc, char **argv)
+{
+    unsigned int seed = 0x12345678;  // base value
+
+    for (int i = 1; i < argc; i++)
+    {
+        seed ^= atoi(argv[i]) + (seed << 6) + (seed >> 2);
+    }
+    return seed;
+}
+
+char	ft_rand(void)
+{
+	static unsigned int seed = 123456789;
+	seed ^= seed << 13;
+    seed ^= seed >> 17;
+    seed ^= seed << 5;
+    return (seed);
+}
 long	get_time(t_table *table)
 {
 	struct timeval	now;
@@ -227,12 +246,14 @@ int main(int argc, char **argv)
 	table = init_table(argc, argv);
 	if (!table)
 		return (ERROR);
-	init_threads(table);
-	monitor(table);
-	kill_threads(table);
-	// for (int i = 0; i < table->input[PHILO]; i++)
-	// 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
-	// 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
+	// init_threads(table);
+	// monitor(table);
+	// kill_threads(table);
+	// // for (int i = 0; i < table->input[PHILO]; i++)
+	// // 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
+	// // 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
+	while (TRUE)
+		printf ("%d\n", ft_rand()), sleep(1);
 	free_all(table, table->input[PHILO], TRUE, TRUE);
 }
 
