@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/09 21:25:10 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/10 01:25:08 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ long	philo_atol(char *s)
 		if (!(*s >= '0' && *s <= '9'))
 			return (ERROR);
 		sum = sum * 10 + *s++ - '0';
-		if (sum > 2147483647)
+		if (sum > INT_MAX)
 			return (ERROR);
 	}
 	return (sum);
@@ -110,15 +110,15 @@ t_table	*init_table(int argc, char **argv)
 	int		i;
 
 	if (!validate_input(input, argc, ++argv))
-		return (printf("Invalid Input.\n"), NULL);
+		return (printf(INPUT), NULL);
 	table = ft_calloc(1, sizeof(t_table) + sizeof(t_philo) * input[PHILO]);
 	if (!table)
-		return (printf("Malloc Error.\n"), NULL);
+		return (printf(MALLOC), NULL);
 	i = -1;
 	while (++i < 5)
 		table->input[i] = input[i];
 	if (!init_mutex(table))	
-		return (printf("Mutex Allocantion Error.\n"), NULL);
+		return (printf("%s", MUTEX), NULL);
 	gettimeofday(&table->start, NULL);
 	return (table);
 }
@@ -136,7 +136,7 @@ void	print_philo(t_philo *philo, char *s)
 	if (is_end(philo->table))
 		return ;
 	pthread_mutex_lock(&philo->table->print);
-	printf("%ld %d %s\n", get_time(philo->table), philo->id, s);
+	printf(PRINT, get_time(philo->table), philo->id, s);
 	pthread_mutex_unlock(&philo->table->print);
 }
 
@@ -148,13 +148,13 @@ void	philo_die(t_philo *philo)
 	philo->is_dead = TRUE;
 	pthread_mutex_unlock(&philo->table->monitor);
 	pthread_mutex_lock(&philo->table->print);
-	printf("%ld %d died\n", get_time(philo->table), philo->id);
+	printf(FARM, get_time(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print);
 }
 
 void	philo_sleep(t_philo *philo)
 {
-	print_philo(philo, "is sleeping\n");
+	print_philo(philo, SLEEPING);
 	usleep(philo->table->input[SLEEP] * 1000);
 }
 
@@ -182,11 +182,11 @@ void	leave_fork(t_philo *philo)
 
 void	philo_eat(t_philo *philo)
 {
-	print_philo(philo, "is thinking\n");
+	print_philo(philo, THINKING);
 	if (get_fork(philo) == FALSE)
 		return ;
 	philo->eaten++;
-	print_philo(philo, "is eating\n");
+	print_philo(philo, EATING);
 	usleep(philo->table->input[EAT] * 1000);
 	leave_fork(philo);
 }

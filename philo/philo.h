@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/09 17:52:22 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/10 01:38:25 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,41 +20,32 @@
 #include <sys/time.h>
 #include <pthread.h>
 
-# ifndef TRUE
-#  define TRUE 1
-# endif
-
-# ifndef FALSE
-#  define FALSE 0
-# endif
-
-# ifndef ERROR
-#  define ERROR -1
-# endif
-
-# ifndef PHILO
-#  define PHILO 0
-# endif
-
-# ifndef STARVE
-#  define STARVE 1
-# endif
-
-# ifndef EAT
-#  define EAT 2
-# endif
-
-# ifndef SLEEP
-#  define SLEEP 3
-# endif
-
-# ifndef FULL
-#  define FULL 4
-# endif
-
-# ifndef INT_MAX
+// Utils
 #  define INT_MAX 2147483647
-# endif
+#  define TRUE 1
+#  define FALSE 0
+#  define ERROR -1
+
+// Indexes for user input data array
+#  define PHILO 0
+#  define STARVE 1
+#  define EAT 2
+#  define SLEEP 3
+#  define FULL 4
+
+// Action messages for print_philo
+#  define FORK 0
+#  define EATING "\033[38;5;208mis eating... \033[0m🍔\n"
+#  define SLEEPING "\033[34mis sleeping... \033[0m💤\n"
+#  define THINKING "\033[1;37mis thinking... \033[0m💭\n"
+#  define FARM "# \033[36m%ldms\033[0m | PHILO NUMBER: %d \033[32mwent to the farm!\033[0m 🏡\n"
+#  define PRINT "# \033[36m%ldms\033[0m | PHILO NUMBER: %d %s\n"
+
+// Error messages
+#  define INPUT "Invalid Input.\n"
+#  define MALLOC "Malloc Error.\n"
+#  define MUTEX "Mutex Init Error.\n"
+
 
 typedef struct s_table t_table;
 typedef struct s_philo
