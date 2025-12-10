@@ -6,31 +6,12 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/09 18:57:19 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/09 21:25:10 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-unsigned int create_seed_from_args(int argc, char **argv)
-{
-    unsigned int seed = 0x12345678;  // base value
-
-    for (int i = 1; i < argc; i++)
-    {
-        seed ^= atoi(argv[i]) + (seed << 6) + (seed >> 2);
-    }
-    return seed;
-}
-
-char	ft_rand(void)
-{
-	static unsigned int seed = 123456789;
-	seed ^= seed << 13;
-    seed ^= seed >> 17;
-    seed ^= seed << 5;
-    return (seed);
-}
 long	get_time(t_table *table)
 {
 	struct timeval	now;
@@ -112,7 +93,7 @@ t_table	*init_mutex(t_table *table)
 	{
 		if (pthread_mutex_init(&table->philo[i].fork, NULL))
 			return (free_all(table, i, FALSE, FALSE), NULL);
-		table->philo[i].id = i;
+		table->philo[i].id = i + 1;
 		table->philo[i].table = table;
 	}
 	if (pthread_mutex_init(&table->print, NULL))
@@ -142,13 +123,6 @@ t_table	*init_table(int argc, char **argv)
 	return (table);
 }
 
-void	print_philo(t_philo *philo, char *s)
-{
-	pthread_mutex_lock(&philo->table->print);
-	printf("%ld %d %s\n", get_time(philo->table), philo->id, s);
-	pthread_mutex_unlock(&philo->table->print);
-}
-
 char	is_end(t_table *table)
 {
 	pthread_mutex_lock(&table->monitor);
@@ -157,12 +131,25 @@ char	is_end(t_table *table)
 	return (pthread_mutex_unlock(&table->monitor), FALSE);
 }
 
+void	print_philo(t_philo *philo, char *s)
+{
+	if (is_end(philo->table))
+		return ;
+	pthread_mutex_lock(&philo->table->print);
+	printf("%ld %d %s\n", get_time(philo->table), philo->id, s);
+	pthread_mutex_unlock(&philo->table->print);
+}
+
+
+
 void	philo_die(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->monitor);
 	philo->is_dead = TRUE;
 	pthread_mutex_unlock(&philo->table->monitor);
-	print_philo(philo, "died\n");
+	pthread_mutex_lock(&philo->table->print);
+	printf("%ld %d died\n", get_time(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print);
 }
 
 void	philo_sleep(t_philo *philo)
@@ -171,18 +158,44 @@ void	philo_sleep(t_philo *philo)
 	usleep(philo->table->input[SLEEP] * 1000);
 }
 
+char	get_fork(t_philo *philo)
+{
+	pthread_mutex_t	*first;
+	pthread_mutex_t	*second;
+
+	first = &philo->fork;
+	second = &philo->table->philo[philo->id % philo->table->input[PHILO]].fork;
+	if (philo->id == philo->table->input[PHILO])
+		{
+			first = second;
+			second = &philo->fork;
+		}	
+	pthread_mutex_lock(first);
+	pthread_mutex_lock(second);
+	return (TRUE);
+}
+void	leave_fork(t_philo *philo)
+{
+	pthread_mutex_unlock(&philo->fork);
+	pthread_mutex_unlock(&philo->table->philo[philo->id % philo->table->input[PHILO]].fork);
+}
+
 void	philo_eat(t_philo *philo)
 {
-	print_philo(philo, "is eating\n");
+	print_philo(philo, "is thinking\n");
+	if (get_fork(philo) == FALSE)
+		return ;
 	philo->eaten++;
+	print_philo(philo, "is eating\n");
 	usleep(philo->table->input[EAT] * 1000);
+	leave_fork(philo);
 }
 
 void	*routine(void *philo)
 {
 	t_philo *p = (t_philo *)philo;
-	// if (p->id % 1)
-	// 	usleep((p->table->input[EAT] * 1000) / p->table->input[PHILO]);
+	if (p->id % 2)
+		usleep((p->table->input[EAT] * 1000) / p->table->input[PHILO]);
 	while (!is_end(p->table))
 	{
 		philo_eat(philo);
@@ -246,14 +259,12 @@ int main(int argc, char **argv)
 	table = init_table(argc, argv);
 	if (!table)
 		return (ERROR);
-	// init_threads(table);
-	// monitor(table);
-	// kill_threads(table);
-	// // for (int i = 0; i < table->input[PHILO]; i++)
-	// // 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
-	// // 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
-	while (TRUE)
-		printf ("%d\n", ft_rand()), sleep(1);
+	init_threads(table);
+	monitor(table);
+	kill_threads(table);
+	// for (int i = 0; i < table->input[PHILO]; i++)
+	// 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
+	// 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
 	free_all(table, table->input[PHILO], TRUE, TRUE);
 }
 
