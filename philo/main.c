@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/11 21:27:58 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/11 21:34:40 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,8 @@ char	get_fork(t_philo *philo)
 {
 	pthread_mutex_lock(philo->first);
 	print_philo(philo, FORK);
+	if (is_end(philo->table))
+		return (pthread_mutex_unlock(philo->first), FALSE);
 	pthread_mutex_lock(philo->second);
 	print_philo(philo, FORK);
 	return (TRUE);
