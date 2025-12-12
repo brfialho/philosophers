@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/11 21:30:13 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/11 22:30:21 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ typedef struct s_philo
 	pthread_mutex_t fork;
 	pthread_mutex_t *first;
 	pthread_mutex_t *second;
-	unsigned char	is_dead;
+	unsigned long	last_meal;
 	int				eaten;
 	t_table			*table;
 }	t_philo;

@@ -6,16 +6,16 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/11 22:14:49 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/11 22:40:01 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long	get_time(t_table *table)
+unsigned long	get_time(t_table *table)
 {
 	struct timeval	now;
-	long			delta_time;
+	unsigned long	delta_time;
 
 	gettimeofday(&now, NULL);
 	delta_time = (now.tv_sec - table->start.tv_sec) * 1000000 \
@@ -159,9 +159,6 @@ void	print_philo(t_philo *philo, char *s)
 
 void	philo_die(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->table->monitor);
-	philo->is_dead = TRUE;
-	pthread_mutex_unlock(&philo->table->monitor);
 	pthread_mutex_lock(&philo->table->print);
 	printf(FARM, get_time(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print);
@@ -194,19 +191,20 @@ void	philo_eat(t_philo *philo)
 	print_philo(philo, THINKING);
 	if (get_fork(philo) == FALSE)
 		return ;
+	pthread_mutex_lock(&philo->table->monitor);
+	philo->eaten++;
+	philo->last_meal = get_time(philo->table);
+	pthread_mutex_unlock(&philo->table->monitor);
 	print_philo(philo, EATING);
 	usleep(philo->table->input[EAT] * 1000);
 	leave_fork(philo);
-	pthread_mutex_lock(&philo->table->monitor);
-	philo->eaten++;
-	pthread_mutex_unlock(&philo->table->monitor);
 }
 
 void	*routine(void *philo)
 {
 	t_philo *p = (t_philo *)philo;
 	if (p->id % 2)
-		usleep((p->table->input[EAT] * 1000) / p->table->input[PHILO]);
+		usleep(1000);
 	while (!is_end(p->table))
 	{
 		philo_eat(philo);
@@ -245,8 +243,8 @@ char	monitor_helper(t_table *table)
 	full_eaten = 0;
 	while (++i < table->input[PHILO])
 	{
-		if (table->philo[i].is_dead)
-			return (FALSE);
+		if (get_time(table) - table->philo[i].last_meal > (unsigned long)table->input[STARVE])
+			return (philo_die(&table->philo[i]), FALSE);
 		if (table->input[FULL] != -1 
 			&& table->philo[i].eaten >= table->input[FULL])
 			full_eaten++;
@@ -270,7 +268,7 @@ void	monitor(t_table *table)
 			table->end = TRUE;
 		}
 		pthread_mutex_unlock(&table->monitor);
-		usleep(1 * 1);
+		usleep(1 * 100);
 	}
 }
 
