@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/10 01:25:08 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/11 21:27:58 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,22 @@ void	free_all(t_table *table, int m_count, char print, char monitor)
 	free(table);
 }
 
+void	assign_philos_fork(t_table *table)
+{
+	int	i;
+	int	philo;
+
+	philo = table->input[PHILO];
+	i = -1;
+	while (++i < philo)
+	{
+		table->philo[i].first = &table->philo[i].fork;
+		table->philo[i].second = &table->philo[(i + 1) % philo].fork;
+	}
+	table->philo[philo - 1].first = &table->philo[0].fork;
+	table->philo[philo - 1].second = &table->philo[philo - 1].fork;
+}
+
 t_table	*init_mutex(t_table *table)
 {
 	int	i;
@@ -100,6 +116,7 @@ t_table	*init_mutex(t_table *table)
 		return (free_all(table, i, FALSE, FALSE), NULL);
 	if (pthread_mutex_init(&table->monitor, NULL))
 		return (free_all(table, i, TRUE, FALSE), NULL);
+	assign_philos_fork(table);
 	return (table);
 }
 
@@ -140,8 +157,6 @@ void	print_philo(t_philo *philo, char *s)
 	pthread_mutex_unlock(&philo->table->print);
 }
 
-
-
 void	philo_die(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->monitor);
@@ -160,24 +175,16 @@ void	philo_sleep(t_philo *philo)
 
 char	get_fork(t_philo *philo)
 {
-	pthread_mutex_t	*first;
-	pthread_mutex_t	*second;
-
-	first = &philo->fork;
-	second = &philo->table->philo[philo->id % philo->table->input[PHILO]].fork;
-	if (philo->id == philo->table->input[PHILO])
-		{
-			first = second;
-			second = &philo->fork;
-		}	
-	pthread_mutex_lock(first);
-	pthread_mutex_lock(second);
+	pthread_mutex_lock(philo->first);
+	print_philo(philo, FORK);
+	pthread_mutex_lock(philo->second);
+	print_philo(philo, FORK);
 	return (TRUE);
 }
 void	leave_fork(t_philo *philo)
 {
-	pthread_mutex_unlock(&philo->fork);
-	pthread_mutex_unlock(&philo->table->philo[philo->id % philo->table->input[PHILO]].fork);
+	pthread_mutex_unlock(philo->first);
+	pthread_mutex_unlock(philo->second);
 }
 
 void	philo_eat(t_philo *philo)

@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/10 01:38:25 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/11 21:30:13 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 #  define FULL 4
 
 // Action messages for print_philo
-#  define FORK 0
+#  define FORK "\033[38;5;255mhas taken a fork... \033[0m🍴\n"
 #  define EATING "\033[38;5;208mis eating... \033[0m🍔\n"
 #  define SLEEPING "\033[34mis sleeping... \033[0m💤\n"
 #  define THINKING "\033[1;37mis thinking... \033[0m💭\n"
@@ -53,6 +53,8 @@ typedef struct s_philo
 	int				id;
 	pthread_t		thread;
 	pthread_mutex_t fork;
+	pthread_mutex_t *first;
+	pthread_mutex_t *second;
 	unsigned char	is_dead;
 	int				eaten;
 	t_table			*table;
