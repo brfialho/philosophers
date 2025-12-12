@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/11 22:40:01 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/11 22:45:36 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +213,7 @@ void	*routine(void *philo)
 		philo_sleep(philo);
 		if (is_end(p->table))
 			return (p);
+		usleep(5 * 1000);
 	}
 	return (p);
 }
