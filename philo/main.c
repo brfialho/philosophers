@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/11 21:34:40 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/11 22:14:49 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,10 +194,12 @@ void	philo_eat(t_philo *philo)
 	print_philo(philo, THINKING);
 	if (get_fork(philo) == FALSE)
 		return ;
-	philo->eaten++;
 	print_philo(philo, EATING);
 	usleep(philo->table->input[EAT] * 1000);
 	leave_fork(philo);
+	pthread_mutex_lock(&philo->table->monitor);
+	philo->eaten++;
+	pthread_mutex_unlock(&philo->table->monitor);
 }
 
 void	*routine(void *philo)
@@ -210,8 +212,6 @@ void	*routine(void *philo)
 		philo_eat(philo);
 		if (is_end(p->table))
 			return (p);
-		if (p->eaten == 10)
-			return (philo_die(p), p);
 		philo_sleep(philo);
 		if (is_end(p->table))
 			return (p);
@@ -236,25 +236,38 @@ void	kill_threads(t_table *table)
 	while (++i < table->input[PHILO])
 		pthread_join(table->philo[i].thread, NULL);
 }
+char	monitor_helper(t_table *table)
+{
+	int	i;
+	int	full_eaten;
+
+	i = -1;
+	full_eaten = 0;
+	while (++i < table->input[PHILO])
+	{
+		if (table->philo[i].is_dead)
+			return (FALSE);
+		if (table->input[FULL] != -1 
+			&& table->philo[i].eaten >= table->input[FULL])
+			full_eaten++;
+	}
+	if (full_eaten == table->input[PHILO])
+		return (FALSE);
+	return (TRUE);
+}
 
 void	monitor(t_table *table)
 {
-	int	i;
 	int loop;
 
 	loop = TRUE;
 	while (loop)
 	{
-		i = -1;
 		pthread_mutex_lock(&table->monitor);
-		while (++i < table->input[PHILO])
+		if (!monitor_helper(table))
 		{
-			if (table->philo[i].is_dead)
-			{
-				table->end = TRUE;
-				loop = FALSE;
-				break;
-			}
+			loop = FALSE;
+			table->end = TRUE;
 		}
 		pthread_mutex_unlock(&table->monitor);
 		usleep(1 * 1);
