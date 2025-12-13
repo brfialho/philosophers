@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 18:49:41 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 19:13:31 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,6 @@ void	leave_fork(t_philo *philo)
 
 void	philo_eat(t_philo *philo)
 {
-	print_philo(philo, THINKING);
 	if (get_fork(philo) == FALSE)
 		return ;
 	pthread_mutex_lock(&philo->table->monitor);
@@ -204,18 +203,19 @@ void	philo_eat(t_philo *philo)
 
 void	*routine(void *philo)
 {
-	t_philo *p = (t_philo *)philo;
-	if (p->id % 2)
-		usleep(1000);
+	t_philo *p;
+
+	p = (t_philo *)philo;
 	while (!is_end(p->table))
 	{
+		print_philo(philo, THINKING);
+		usleep(1000);
 		philo_eat(philo);
 		if (is_end(p->table))
 			return (p);
 		philo_sleep(philo);
 		if (is_end(p->table))
 			return (p);
-		usleep(5 * 1000);
 	}
 	return (p);
 }
