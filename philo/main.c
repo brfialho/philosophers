@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 19:13:31 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 19:22:51 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ int	validate_input(long *data, int argc, char **argv)
 	while (++i < argc - 1)
 	{
 		data[i] = philo_atol(argv[i]);
-		if (data[i] == ERROR)
+		if (data[i] == ERROR
+			|| (i < 4 && data[i] == 0))
 			return (FALSE);
 	}
 	if (argc == 5)
