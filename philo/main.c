@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 19:39:08 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 19:41:19 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,12 +165,6 @@ void	philo_die(t_philo *philo)
 	pthread_mutex_unlock(&philo->table->print);
 }
 
-void	philo_sleep(t_philo *philo)
-{
-	print_philo(philo, SLEEPING);
-	usleep(philo->table->input[SLEEP] * 1000);
-}
-
 char	get_fork(t_philo *philo)
 {
 	pthread_mutex_lock(philo->first);
@@ -183,11 +177,6 @@ char	get_fork(t_philo *philo)
 	print_philo(philo, FORK);
 	return (TRUE);
 }
-void	leave_fork(t_philo *philo)
-{
-	pthread_mutex_unlock(philo->first);
-	pthread_mutex_unlock(philo->second);
-}
 
 void	philo_eat(t_philo *philo)
 {
@@ -199,7 +188,8 @@ void	philo_eat(t_philo *philo)
 	pthread_mutex_unlock(&philo->table->monitor);
 	print_philo(philo, EATING);
 	usleep(philo->table->input[EAT] * 1000);
-	leave_fork(philo);
+	pthread_mutex_unlock(philo->first);
+	pthread_mutex_unlock(philo->second);
 }
 
 void	*routine(void *philo)
@@ -216,7 +206,8 @@ void	*routine(void *philo)
 		philo_eat(philo);
 		if (is_end(p->table))
 			return (p);
-		philo_sleep(philo);
+		print_philo(p, SLEEPING);
+		usleep(p->table->input[SLEEP] * 1000);
 		if (is_end(p->table))
 			return (p);
 	}
