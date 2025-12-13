@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 19:22:51 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 19:29:51 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,6 +207,8 @@ void	*routine(void *philo)
 	t_philo *p;
 
 	p = (t_philo *)philo;
+	if (p->id % 2)
+		usleep(1000);
 	while (!is_end(p->table))
 	{
 		print_philo(philo, THINKING);
