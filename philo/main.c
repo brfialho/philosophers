@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/11 22:45:36 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 18:49:41 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,8 @@ char	get_fork(t_philo *philo)
 {
 	pthread_mutex_lock(philo->first);
 	print_philo(philo, FORK);
+	if (philo->table->input[PHILO] == 1)
+		usleep(philo->table->input[STARVE] * 1000);
 	if (is_end(philo->table))
 		return (pthread_mutex_unlock(philo->first), FALSE);
 	pthread_mutex_lock(philo->second);
@@ -283,9 +285,6 @@ int main(int argc, char **argv)
 	init_threads(table);
 	monitor(table);
 	kill_threads(table);
-	// for (int i = 0; i < table->input[PHILO]; i++)
-	// 	if (table->philo[i].is_dead || table->philo[i].eaten >= 30)
-	// 		printf("\n%d has eaten %d and died\n", table->philo[i].id, table->philo[i].eaten);
 	free_all(table, table->input[PHILO], TRUE, TRUE);
 }
 
