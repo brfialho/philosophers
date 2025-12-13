@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 19:29:51 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 19:39:08 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,12 @@ char	monitor_helper(t_table *table)
 			full_eaten++;
 	}
 	if (full_eaten == table->input[PHILO])
+	{
+		pthread_mutex_lock(&table->print);
+		printf(HAPPY, get_time(table));
+		pthread_mutex_unlock(&table->print);
 		return (FALSE);
+	}
 	return (TRUE);
 }
 

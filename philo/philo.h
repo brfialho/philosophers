@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/11 22:30:21 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 19:38:44 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,13 @@
 #  define SLEEP 3
 #  define FULL 4
 
-// Action messages for print_philo
+// Print Messages
 #  define FORK "\033[38;5;255mhas taken a fork... \033[0m🍴\n"
 #  define EATING "\033[38;5;208mis eating... \033[0m🍔\n"
 #  define SLEEPING "\033[34mis sleeping... \033[0m💤\n"
 #  define THINKING "\033[1;37mis thinking... \033[0m💭\n"
 #  define FARM "# \033[36m%ldms\033[0m | PHILO NUMBER: %d \033[32mwent to the farm!\033[0m 🏡\n"
+#  define HAPPY "# \033[36m%ldms\033[0m | \033[38;5;226mEvebody is full and happy!\033[0m 😊\n"
 #  define PRINT "# \033[36m%ldms\033[0m | PHILO NUMBER: %d %s\n"
 
 // Error messages
