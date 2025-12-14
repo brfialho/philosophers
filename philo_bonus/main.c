@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 08:28:02 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 08:34:11 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,24 +57,15 @@ void	philo_die(t_table *table)
 
 static void	monitor_helper(t_table *table)
 {
-	int	i;
-	int	full_eaten;
-
-	i = -1;
-	full_eaten = 0;
-	while (++i < table->input[PHILO])
-	{
-		if (get_time(table) - table->philo.last_meal > \
+	if (get_time(table) - table->philo.last_meal > \
 (unsigned long)table->input[STARVE])
-			philo_die(table);
-		if (table->input[FULL] != -1
-			&& table->philo.eaten == table->input[FULL])
-			table->philo.is_full = TRUE;
-	}
-	if (table->philo.is_full)
+		philo_die(table);
+	if (table->input[FULL] != -1
+		&& table->philo.eaten == table->input[FULL]
+		&& table->philo.is_full == FALSE)
 	{
+		table->philo.is_full = TRUE;
 		sem_post(table->full);
-		table->philo.is_full = FALSE;
 	}
 	return ;
 }
