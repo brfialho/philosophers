@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 10:03:29 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 10:35:53 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static void	monitor_helper(t_table *table)
 		&& table->philo.is_full == FALSE)
 	{
 		table->philo.is_full = TRUE;
-		while (++i < table->input[PHILO])
+		// while (++i < table->input[PHILO])
 			sem_post(table->full);
 	}
 	return ;
@@ -113,8 +113,10 @@ void	*monitor_full(void *table)
 	while (++i < t->input[PHILO])
 	{
 		sem_wait(t->full);
+		sem_post(t->full);
 		usleep(1000);
 	}
+	sem_post(t->full);
 	free(table);
 	exit(0);
 	return (table);
