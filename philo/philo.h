@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 19:38:44 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 21:50:10 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,30 @@ typedef struct s_table
 	long			input[5];
 	t_philo			philo[];
 }	t_table;
+
+// // Functions 
+// Monitor
+void			monitor(t_table *table);
+
+// Validator
+int				validate_input(long *data, int argc, char **argv);
+
+// init
+t_table			*init_table(int argc, char **argv);
+void			init_threads(t_table *table);
+
+// Destroy
+void			free_all(t_table *table, int m_count, char print, char monitor);
+void			kill_threads(t_table *table);
+
+// Routine
+void			*routine(void *philo);
+
+// Utils
+unsigned long	get_time(t_table *table);
+void			*ft_calloc(size_t nmemb, size_t size);
+void			philo_die(t_philo *philo);
+void			print_philo(t_philo *philo, char *s);
+char			is_end(t_table *table);
 
 #endif

@@ -1,26 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   destroy.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 21:53:26 by brfialho         ###   ########.fr       */
+/*   Created: 2025/12/13 21:37:41 by brfialho          #+#    #+#             */
+/*   Updated: 2025/12/13 21:38:19 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int main(int argc, char **argv)
+void	free_all(t_table *table, int m_count, char print, char monitor)
 {
-	t_table *table;
+	int	i;
 
-	table = init_table(argc, argv);
-	if (!table)
-		return (ERROR);
-	init_threads(table);
-	monitor(table);
-	kill_threads(table);
-	free_all(table, table->input[PHILO], TRUE, TRUE);
+	i = -1;
+	while (++i < m_count)
+		pthread_mutex_destroy(&table->philo[i].fork);
+	if (print)
+		pthread_mutex_destroy(&table->print);
+	if (monitor)
+		pthread_mutex_destroy(&table->monitor);
+	free(table);
 }
+
+void	kill_threads(t_table *table)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->input[PHILO])
+		pthread_join(table->philo[i].thread, NULL);
+}
+

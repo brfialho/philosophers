@@ -1,6 +1,12 @@
 CC= cc -Werror -Wextra -Wall -I. -g3
 
-SRC= main.c
+SRC= main.c \
+	destroy.c \
+	init.c \
+	monitor.c \
+	routine.c \
+	utils.c \
+	validator.c
 
 O_DIR= obj/
 OBJ= $(SRC:%.c=$(O_DIR)%.o)
