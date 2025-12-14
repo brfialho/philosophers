@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 21:18:59 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 21:45:53 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 22:14:30 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ unsigned long	get_time(t_table *table)
 
 	gettimeofday(&now, NULL);
 	delta_time = (now.tv_sec - table->start.tv_sec) * 1000000 \
-					+ now.tv_usec - table->start.tv_usec;
++ now.tv_usec - table->start.tv_usec;
 	return (delta_time / 1000);
 }
 
@@ -39,7 +39,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 void	philo_die(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->print);
-	printf(FARM, get_time(philo->table), philo->id);
+	printf(FA RM, get_time(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print);
 }
 
@@ -59,4 +59,3 @@ char	is_end(t_table *table)
 		return (pthread_mutex_unlock(&table->monitor), TRUE);
 	return (pthread_mutex_unlock(&table->monitor), FALSE);
 }
-

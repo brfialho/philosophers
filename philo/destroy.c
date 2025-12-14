@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 21:37:41 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 21:38:19 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 21:59:48 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,3 @@ void	kill_threads(t_table *table)
 	while (++i < table->input[PHILO])
 		pthread_join(table->philo[i].thread, NULL);
 }
-

@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 21:46:11 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 21:47:37 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 21:59:54 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static char	get_fork(t_philo *philo);
 
 void	*routine(void *philo)
 {
-	t_philo *p;
+	t_philo	*p;
 
 	p = (t_philo *)philo;
 	if (p->id % 2)

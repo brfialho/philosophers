@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 21:32:47 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 21:34:10 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 21:59:43 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	validate_input(long *data, int argc, char **argv)
 static long	philo_atol(char *s)
 {
 	long	sum;
-	
+
 	sum = 0;
 	while (*s)
 	{

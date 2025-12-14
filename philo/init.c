@@ -6,14 +6,14 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 21:34:55 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/13 21:37:17 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/13 22:04:22 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 static t_table	*init_mutex(t_table *table);
-static void	assign_philos_fork(t_table *table);
+static void		assign_philos_fork(t_table *table);
 
 t_table	*init_table(int argc, char **argv)
 {
@@ -29,7 +29,7 @@ t_table	*init_table(int argc, char **argv)
 	i = -1;
 	while (++i < 5)
 		table->input[i] = input[i];
-	if (!init_mutex(table))	
+	if (!init_mutex(table))
 		return (printf("%s", MUTEX), NULL);
 	gettimeofday(&table->start, NULL);
 	return (table);
@@ -41,7 +41,8 @@ void	init_threads(t_table *table)
 
 	i = -1;
 	while (++i < table->input[PHILO])
-		pthread_create(&table->philo[i].thread, NULL, routine, &table->philo[i]);
+		pthread_create(&table->philo[i].thread, NULL, routine, \
+&table->philo[i]);
 }
 
 static t_table	*init_mutex(t_table *table)
@@ -79,4 +80,3 @@ static void	assign_philos_fork(t_table *table)
 	table->philo[philo - 1].first = &table->philo[0].fork;
 	table->philo[philo - 1].second = &table->philo[philo - 1].fork;
 }
-
