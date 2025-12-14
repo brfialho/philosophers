@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 08:34:11 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 10:03:29 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,24 +39,23 @@ int	init_childs(t_table *table)
 	return (TRUE);
 }
 
-void	kill_zombies(int n_pid)
-{
-	int	i;
-
-	i = -1;
-	while (++i < n_pid)
-		waitpid(0, NULL, 0);
-}
-
 void	philo_die(t_table *table)
 {
+	int i;
+
+	
 	sem_wait(table->print);
 	printf(FA RM, get_time(table), table->philo.id);
-	sem_post(table->nuke);
+	i = -1;
+	while (++i < table->input[PHILO])
+		sem_post(table->nuke);
 }
 
 static void	monitor_helper(t_table *table)
 {
+	int	i;
+
+	i = -1;
 	if (get_time(table) - table->philo.last_meal > \
 (unsigned long)table->input[STARVE])
 		philo_die(table);
@@ -65,7 +64,8 @@ static void	monitor_helper(t_table *table)
 		&& table->philo.is_full == FALSE)
 	{
 		table->philo.is_full = TRUE;
-		sem_post(table->full);
+		while (++i < table->input[PHILO])
+			sem_post(table->full);
 	}
 	return ;
 }
@@ -103,13 +103,45 @@ static void	philo_eat(t_table *table)
 	sem_post(table->fork);
 	sem_post(table->fork);
 }
+void	*monitor_full(void *table)
+{
+	int		i;
+	t_table *t;
+
+	t = table;
+	i = -1;
+	while (++i < t->input[PHILO])
+	{
+		sem_wait(t->full);
+		usleep(1000);
+	}
+	free(table);
+	exit(0);
+	return (table);
+}
+
+void	*monitor_death(void *table)
+{
+	t_table	*t;
+
+	t = table;
+	sem_wait(t->nuke);
+	sem_post(t->nuke);
+	free(table);
+	exit(1);
+	return (table);
+}
 
 void	routine(t_table *table)
 {
 	if (table->philo.id % 2)
 		usleep(1000);
-	pthread_create(&table->philo.thread, NULL, monitor, table);
-	pthread_detach(table->philo.thread);
+	pthread_create(&table->philo.monitor, NULL, monitor, table);
+	pthread_create(&table->philo.wait_death, NULL, monitor_death, table);
+	pthread_create(&table->philo.wait_full, NULL, monitor_full, table);
+	pthread_detach(table->philo.monitor);
+	pthread_detach(table->philo.wait_death);
+	pthread_detach(table->philo.wait_full);
 	while (TRUE)
 	{
 		print_philo(table, THINKING);
@@ -128,7 +160,7 @@ void	kill_childs(t_table *table)
 
 	i = -1;
 	while (++i < table->input[PHILO])
-		kill(table->pid[i], SIGTERM);
+		waitpid(table->pid[i], NULL, 0);
 }
 
 void	destroy_sem(void)
@@ -140,29 +172,29 @@ void	destroy_sem(void)
 	sem_unlink("/philo_full");
 }
 
-void	*wait_for_full(void *table)
-{
-	t_table *t;
-	int		i;
+// void	*wait_for_full(void *table)
+// {
+// 	t_table *t;
+// 	int		i;
 
-	t = table;
-	i = -1;
-	while (++i < t->input[PHILO])
-		sem_wait(t->full);
-	kill_childs(t);
-	kill_zombies(t->input[PHILO]);
-	printf(HA PPY, get_time(table));
-	destroy_sem();
-	free_all(t);
-	exit(0);
-}
+// 	t = table;
+// 	i = -1;
+// 	while (++i < t->input[PHILO])
+// 		sem_wait(t->full);
+// 	kill_childs(t);
+// 	kill_zombies(t->input[PHILO]);
+// 	printf(HA PPY, get_time(table));
+// 	destroy_sem();
+// 	free_all(t);
+// 	exit(0);
+// }
 
 
-void	init_evil_twin(t_table *table)
-{
-	pthread_create(&table->twin, NULL, wait_for_full, table);
-	pthread_detach(table->twin);
-}
+// void	init_evil_twin(t_table *table)
+// {
+// 	pthread_create(&table->twin, NULL, wait_for_full, table);
+// 	pthread_detach(table->twin);
+// }
 
 int	main(int argc, char **argv)
 {
@@ -172,11 +204,9 @@ int	main(int argc, char **argv)
 	if (!table)
 		return (ERROR);
 	init_childs(table);
-	init_evil_twin(table);
+	// init_evil_twin(table);
 	sem_wait(table->nuke);
 	kill_childs(table);
-	kill_zombies(table->input[PHILO]);
 	destroy_sem();
 	free_all(table);
-	exit(0);
 }

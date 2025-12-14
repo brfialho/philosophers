@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 08:12:05 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 09:43:41 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,9 @@ typedef struct s_table	t_table;
 typedef struct s_philo
 {
 	char			sem_name[50];
-	pthread_t		thread;
+	pthread_t		monitor;
+	pthread_t		wait_death;
+	pthread_t		wait_full;
 	int				id;
 	unsigned long	last_meal;
 	int				eaten;
