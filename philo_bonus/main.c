@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 08:20:26 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 08:24:54 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,9 @@ void	*monitor(void *table)
 static void	philo_eat(t_table *table)
 {
 	sem_wait(table->fork);
+	print_philo(table, FORK);
 	sem_wait(table->fork);
+	print_philo(table, FORK);
 	
 	sem_wait(table->monitor);
 	table->philo.eaten++;
