@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 04:38:57 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 06:42:48 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,52 +48,48 @@ void	kill_zombies(int n_pid)
 		waitpid(0, NULL, 0);
 }
 
-// void	monitor(t_table *table)
-// {
-// 	int	loop;
-
-// 	loop = TRUE;
-// 	while (loop)
-// 	{
-// 		if (table->philo.eaten)
-// 	}
-// }
-
-void	init_monitor_sem(t_table *table)
+void	*monitor(void *table)
 {
-	int	i;
-	int	digits;
-	int	n;
+	t_table *t;
+	int	loop;
 
-	i = -1;
-	while (table->sem_prefix[++i])
-		table->philo.sem_name[i] = table->sem_prefix[i];
-	n = table->philo.id;
-	digits = 1;
-	while (n / 10)
+	t = table;
+	loop = TRUE;
+	while (loop)
 	{
-		n /= 10;
-		digits++;
+		sem_wait(t->monitor);
+		if (t->philo.eaten >= t->input[FULL])
+			sem_post(t->nuke);
+		sem_post(t->monitor);
+		usleep(1000);
 	}
-	n = table->philo.id;
-	while (digits--)
-		table->philo.sem_name[i + digits] = n % 10 + '0';
-	printf ("%s\n", table->philo.sem_name); 
+	return (table);
 }
 
 void	routine(t_table *table)
 {
-	init_monitor_sem(table);
-	// pthread_create(table->philo.thread, NULL, monitor, NULL);
-	// pthread_detach(table->philo.thread);
-	// while (TRUE)
-	// {
-	// 	printf(PRINT, get_time(table), table->philo.id, THINKING);
-	// 	usleep(1000);
-	// 	// philo_eat(philo);
-	// 	printf(PRINT, get_time(table), table->philo.id, SLEEPING);
-	// 	usleep(table->input[SLEEP] * 1000);
-	// }
+	pthread_create(&table->philo.thread, NULL, monitor, table);
+	pthread_detach(table->philo.thread);
+	while (TRUE)
+	{
+		sem_wait(table->print);
+		printf(PRINT, get_time(table), table->philo.id, THINKING);
+		sem_post(table->print);
+		
+		usleep(1000);
+		
+		// philo_eat(philo);
+		
+		sem_wait(table->monitor);
+		table->philo.eaten++;
+		sem_post(table->monitor);
+		
+		sem_wait(table->print);
+		printf(PRINT, get_time(table), table->philo.id, SLEEPING);
+		sem_post(table->print);
+		
+		usleep(table->input[SLEEP] * 1000);
+	}
 	exit(0);
 }
 
@@ -123,13 +119,22 @@ void	routine(t_table *table)
 // 	return (TRUE);
 // }
 
+void	kill_childs(t_table *table)
+{
+	int	i;
 
+	i = -1;
+	while (++i < table->input[PHILO])
+		kill(table->pid[i], SIGTERM);
+}
 
-
-
-
-
-
+void	destroy_sem(void)
+{
+	sem_unlink("/philo_nuke");
+	sem_unlink("/philo_fork");
+	sem_unlink("/philo_monitor");
+	sem_unlink("/philo_print");
+}
 
 int	main(int argc, char **argv)
 {
@@ -139,7 +144,10 @@ int	main(int argc, char **argv)
 	if (!table)
 		return (ERROR);
 	init_childs(table);
-	//monitor(table);
+	sem_wait(table->nuke);
+	sem_wait(table->nuke);
+	kill_childs(table);
 	kill_zombies(table->input[PHILO]);
+	destroy_sem();
 	free_all(table);
 }

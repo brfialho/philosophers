@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 04:30:30 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 06:16:52 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@
 # include <semaphore.h>
 # include <sys/wait.h>
 # include <signal.h>
+# include <fcntl.h>
 
 // Utils
 # define INT_MAX 2147483647
 # define TRUE 1
 # define FALSE 0
 # define ERROR -1
-# define SEM_NAME "/monitor_"
 
 // Indexes for user input data array
 # define PHILO 0
@@ -58,7 +58,6 @@ typedef struct s_table	t_table;
 typedef struct s_philo
 {
 	char			sem_name[50];
-	sem_t			monitor;
 	pthread_t		thread;
 	int				id;
 	unsigned long	last_meal;
@@ -67,12 +66,13 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-	char			*sem_prefix;
-	sem_t			forks;
+	sem_t			*nuke;
+	sem_t			*fork;
+	sem_t			*print;
+	sem_t			*monitor;
 	char			is_main;
 	t_philo			philo;
 	struct timeval	start;
-	char			end;
 	long			input[5];
 	pid_t			pid[];
 }	t_table;
