@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 07:39:01 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 07:46:35 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,32 +131,6 @@ void	routine(t_table *table)
 	}
 }
 
-// static char	monitor_helper(t_table *table)
-// {
-// 	int	i;
-// 	int	full_eaten;
-
-// 	i = -1;
-// 	full_eaten = 0;
-// 	while (++i < table->input[PHILO])
-// 	{
-// 		if (get_time(table) - table->philo[i].last_meal > \
-// (unsigned long)table->input[STARVE])
-// 			return (philo_die(&table->philo[i]), FALSE);
-// 		if (table->input[FULL] != -1
-// 			&& table->philo[i].eaten >= table->input[FULL])
-// 			full_eaten++;
-// 	}
-// 	if (full_eaten == table->input[PHILO])
-// 	{
-// 		pthread_mutex_lock(&table->print);
-// 		printf(HA PPY, get_time(table));
-// 		pthread_mutex_unlock(&table->print);
-// 		return (FALSE);
-// 	}
-// 	return (TRUE);
-// }
-
 void	kill_childs(t_table *table)
 {
 	int	i;
@@ -182,7 +156,6 @@ int	main(int argc, char **argv)
 	if (!table)
 		return (ERROR);
 	init_childs(table);
-	sem_wait(table->nuke);
 	sem_wait(table->nuke);
 	kill_childs(table);
 	kill_zombies(table->input[PHILO]);
