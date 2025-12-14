@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 07:25:54 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 08:12:05 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef struct s_philo
 	int				id;
 	unsigned long	last_meal;
 	int				eaten;
+	char			is_full;
 }	t_philo;
 
 typedef struct s_table
@@ -70,6 +71,8 @@ typedef struct s_table
 	sem_t			*fork;
 	sem_t			*print;
 	sem_t			*monitor;
+	sem_t			*full;
+	pthread_t		twin;
 	char			is_main;
 	t_philo			philo;
 	struct timeval	start;

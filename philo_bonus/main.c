@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 07:46:35 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 08:20:26 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,17 +67,15 @@ static void	monitor_helper(t_table *table)
 		if (get_time(table) - table->philo.last_meal > \
 (unsigned long)table->input[STARVE])
 			philo_die(table);
-		// if (table->input[FULL] != -1
-		// 	&& table->philo.eaten >= table->input[FULL])
-		// 	full_eaten++;
+		if (table->input[FULL] != -1
+			&& table->philo.eaten == table->input[FULL])
+			table->philo.is_full = TRUE;
 	}
-	// if (full_eaten == table->input[PHILO])
-	// {
-	// 	pthread_mutex_lock(&table->print);
-	// 	printf(HA PPY, get_time(table));
-	// 	pthread_mutex_unlock(&table->print);
-	// 	return (FALSE);
-	// }
+	if (table->philo.is_full)
+	{
+		sem_post(table->full);
+		table->philo.is_full = FALSE;
+	}
 	return ;
 }
 
@@ -148,6 +146,30 @@ void	destroy_sem(void)
 	sem_unlink("/philo_print");
 }
 
+void	*wait_for_full(void *table)
+{
+	t_table *t;
+	int		i;
+
+	t = table;
+	i = -1;
+	while (++i < t->input[PHILO])
+		sem_wait(t->full);
+	kill_childs(t);
+	kill_zombies(t->input[PHILO]);
+	printf(HA PPY, get_time(table));
+	destroy_sem();
+	free_all(t);
+	exit(0);
+}
+
+
+void	init_evil_twin(t_table *table)
+{
+	pthread_create(&table->twin, NULL, wait_for_full, table);
+	pthread_detach(table->twin);
+}
+
 int	main(int argc, char **argv)
 {
 	t_table	*table;
@@ -156,9 +178,11 @@ int	main(int argc, char **argv)
 	if (!table)
 		return (ERROR);
 	init_childs(table);
+	init_evil_twin(table);
 	sem_wait(table->nuke);
 	kill_childs(table);
 	kill_zombies(table->input[PHILO]);
 	destroy_sem();
 	free_all(table);
+	exit(0);
 }
