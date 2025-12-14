@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 11:10:59 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 16:31:47 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ typedef struct s_philo
 	char			sem_name[50];
 	pthread_t		monitor;
 	pthread_t		wait_death;
-	pthread_t		wait_full;
 	int				id;
 	unsigned long	last_meal;
 	int				eaten;
@@ -69,15 +68,12 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-	sem_t			*nuke;
 	sem_t			*fork;
 	sem_t			*print;
 	sem_t			*monitor;
+	sem_t			*die;
 	sem_t			*full;
-	sem_t			*everyone_full;
-	sem_t			*big_nuke;
-	pthread_t		twin_full;
-	pthread_t		twin_death;
+	char			is_end;
 	char			is_main;
 	t_philo			philo;
 	struct timeval	start;
@@ -106,6 +102,6 @@ unsigned long	get_time(t_table *table);
 void			*ft_calloc(size_t nmemb, size_t size);
 // void			philo_die(t_philo *philo);
 void			print_philo(t_table *table, char *s);
-// char			is_end(t_table *table);
+char	is_end(t_table *table);
 
 #endif
