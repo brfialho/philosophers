@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 03:10:35 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 03:36:56 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,11 @@ int	init_childs(t_table *table)
 	i = -1;
 	while (++i < table->input[PHILO])
 	{
-		if (table->pid[i])
-			table->pid[i + 1] = fork();
-		if (table->pid[i + 1] < 0)
+		if (table->is_main)
+			table->pid[i] = fork();
+		if (!table->pid[i])
+			table->is_main = FALSE;
+		if (table->pid[i] < 0)
 			return (kill_zombies(i), FALSE);
 	}
 	table->philo.id = i;
@@ -41,22 +43,19 @@ int	kill_zombies(int n_pid)
 	return (TRUE);
 }
 
-// void	routine(t_table *table)
-// {
-// 	t_philo	philo;
-
-// 	memset(&philo, 0, sizeof(t_philo));
-// 	philo.pid = table->pid;
-// 	while (TRUE)
-// 	{
-// 		printf(PRINT, get_time(table), philo.pid, THINKING);
-// 		usleep(1000);
-// 		// philo_eat(philo);
-// 		printf(PRINT, get_time(table), philo.pid, SLEEPING);
-// 		usleep(table->input[SLEEP] * 1000);
-// 	}
-// 	exit(0);
-// }
+void	routine(t_table *table)
+{
+	// while (TRUE)
+	// {
+	// 	printf(PRINT, get_time(table), philo.pid, THINKING);
+	// 	usleep(1000);
+	// 	// philo_eat(philo);
+	// 	printf(PRINT, get_time(table), philo.pid, SLEEPING);
+	// 	usleep(table->input[SLEEP] * 1000);
+	// }
+	printf("%d\n", table->philo.id);
+	exit(0);
+}
 
 int	main(int argc, char **argv)
 {
@@ -66,12 +65,11 @@ int	main(int argc, char **argv)
 	if (!table)
 		return (ERROR);
 	init_childs(table);
-	// if (table->pid == 0)
-	// 	routine(table);
+	if (table->is_main == FALSE)
+	 	routine(table);
 	//monitor(table);
-	// kill_zombies(table->input[PHILO]);
-	// for (int i = 0; i < 6; i++)
-	// 	table->pid[i] ? printf("id %d pid[%d]: %d\n", table->philo.id, i, table->pid[i]) : 0;
-	printf("%d\n", table->is_main);
-	// free_all(table);
+	for (int i = 0; i < table->input[PHILO]; i++)
+	table->is_main ? printf("pid[%d]: %d\n", i, table->pid[i]) : 0;
+	kill_zombies(table->input[PHILO]);
+	free_all(table);
 }
