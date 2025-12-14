@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 06:16:52 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 07:25:54 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void			free_all(t_table *table);
 unsigned long	get_time(t_table *table);
 void			*ft_calloc(size_t nmemb, size_t size);
 // void			philo_die(t_philo *philo);
-// void			print_philo(t_philo *philo, char *s);
+void			print_philo(t_table *table, char *s);
 // char			is_end(t_table *table);
 
 #endif

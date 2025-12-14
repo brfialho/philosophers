@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 06:42:48 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 07:28:01 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,31 +66,39 @@ void	*monitor(void *table)
 	return (table);
 }
 
+static void	philo_eat(t_table *table)
+{
+	sem_wait(table->fork);
+	sem_wait(table->fork);
+	
+	sem_wait(table->monitor);
+	table->philo.eaten++;
+	table->philo.last_meal = get_time(table);
+	sem_post(table->monitor);
+
+	print_philo(table, EATING);
+	usleep(table->input[EAT] * 1000);
+	
+	sem_post(table->fork);
+	sem_post(table->fork);
+}
+
 void	routine(t_table *table)
 {
+	if (table->philo.id % 2)
+		usleep(1000);
 	pthread_create(&table->philo.thread, NULL, monitor, table);
 	pthread_detach(table->philo.thread);
 	while (TRUE)
 	{
-		sem_wait(table->print);
-		printf(PRINT, get_time(table), table->philo.id, THINKING);
-		sem_post(table->print);
-		
+		print_philo(table, THINKING);
 		usleep(1000);
 		
-		// philo_eat(philo);
+		philo_eat(table);
 		
-		sem_wait(table->monitor);
-		table->philo.eaten++;
-		sem_post(table->monitor);
-		
-		sem_wait(table->print);
-		printf(PRINT, get_time(table), table->philo.id, SLEEPING);
-		sem_post(table->print);
-		
+		print_philo(table, SLEEPING);
 		usleep(table->input[SLEEP] * 1000);
 	}
-	exit(0);
 }
 
 // static char	monitor_helper(t_table *table)

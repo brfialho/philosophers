@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 21:18:59 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 05:17:00 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 07:23:49 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,14 @@ void	*ft_calloc(size_t nmemb, size_t size)
 // 	pthread_mutex_unlock(&philo->table->print);
 // }
 
-// void	print_philo(t_philo *philo, char *s)
-// {
-// 	if (is_end(philo->table))
-// 		return ;
-// 	pthread_mutex_lock(&philo->table->print);
-// 	printf(PRINT, get_time(philo->table), philo->id, s);
-// 	pthread_mutex_unlock(&philo->table->print);
-// }
+void	print_philo(t_table *table, char *s)
+{
+	// if (is_end(philo->table))
+	// 	return ;
+	sem_wait(table->print);
+	printf(PRINT, get_time(table), table->philo.id, s);
+	sem_post(table->print);
+}
 
 // char	is_end(t_table *table)
 // {
