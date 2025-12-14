@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 08:24:54 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 08:28:02 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ void	destroy_sem(void)
 	sem_unlink("/philo_fork");
 	sem_unlink("/philo_monitor");
 	sem_unlink("/philo_print");
+	sem_unlink("/philo_full");
 }
 
 void	*wait_for_full(void *table)
