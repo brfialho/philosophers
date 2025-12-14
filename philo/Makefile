@@ -1,4 +1,4 @@
-CC= cc -Werror -Wextra -Wall -I. -g3
+CC= cc -Werror -Wextra -Wall -I.
 
 SRC= main.c \
 	destroy.c \
