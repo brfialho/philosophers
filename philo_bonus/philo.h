@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 09:43:41 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 11:10:59 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,10 @@ typedef struct s_table
 	sem_t			*print;
 	sem_t			*monitor;
 	sem_t			*full;
-	pthread_t		twin;
+	sem_t			*everyone_full;
+	sem_t			*big_nuke;
+	pthread_t		twin_full;
+	pthread_t		twin_death;
 	char			is_main;
 	t_philo			philo;
 	struct timeval	start;

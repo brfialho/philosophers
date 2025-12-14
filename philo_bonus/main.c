@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 10:35:53 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 11:17:05 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,10 @@ void	philo_die(t_table *table)
 {
 	int i;
 
-	
 	sem_wait(table->print);
 	printf(FA RM, get_time(table), table->philo.id);
 	i = -1;
-	while (++i < table->input[PHILO])
-		sem_post(table->nuke);
+	sem_post(table->nuke);
 }
 
 static void	monitor_helper(t_table *table)
@@ -64,8 +62,7 @@ static void	monitor_helper(t_table *table)
 		&& table->philo.is_full == FALSE)
 	{
 		table->philo.is_full = TRUE;
-		// while (++i < table->input[PHILO])
-			sem_post(table->full);
+		sem_post(table->full);
 	}
 	return ;
 }
@@ -105,18 +102,10 @@ static void	philo_eat(t_table *table)
 }
 void	*monitor_full(void *table)
 {
-	int		i;
 	t_table *t;
 
 	t = table;
-	i = -1;
-	while (++i < t->input[PHILO])
-	{
-		sem_wait(t->full);
-		sem_post(t->full);
-		usleep(1000);
-	}
-	sem_post(t->full);
+	sem_wait(t->everyone_full);
 	free(table);
 	exit(0);
 	return (table);
@@ -127,8 +116,7 @@ void	*monitor_death(void *table)
 	t_table	*t;
 
 	t = table;
-	sem_wait(t->nuke);
-	sem_post(t->nuke);
+	sem_wait(t->big_nuke);
 	free(table);
 	exit(1);
 	return (table);
@@ -174,29 +162,43 @@ void	destroy_sem(void)
 	sem_unlink("/philo_full");
 }
 
-// void	*wait_for_full(void *table)
-// {
-// 	t_table *t;
-// 	int		i;
+void	*wait_for_full(void *table)
+{
+	t_table *t;
+	int		i;
 
-// 	t = table;
-// 	i = -1;
-// 	while (++i < t->input[PHILO])
-// 		sem_wait(t->full);
-// 	kill_childs(t);
-// 	kill_zombies(t->input[PHILO]);
-// 	printf(HA PPY, get_time(table));
-// 	destroy_sem();
-// 	free_all(t);
-// 	exit(0);
-// }
+	t = table;
+	i = -1;
+	while (++i < t->input[PHILO])
+		sem_wait(t->full);
+	sem_wait(t->print);
+	i = -1;
+	while (++i < t->input[PHILO])
+		sem_post(t->everyone_full);
+	printf(HA PPY, get_time(table));
+	return (0);
+}
+
+void	*wait_for_death(void *table)
+{
+	t_table *t;
+	int		i;
+
+	t = table;
+	i = -1;
+	sem_wait(t->nuke);
+	i = -1;
+	while (++i < t->input[PHILO])
+		sem_post(t->big_nuke);
+	return (0);
+}
 
 
-// void	init_evil_twin(t_table *table)
-// {
-// 	pthread_create(&table->twin, NULL, wait_for_full, table);
-// 	pthread_detach(table->twin);
-// }
+void	init_evil_twins(t_table *table)
+{
+	pthread_create(&table->twin_full, NULL, wait_for_full, table);
+	pthread_create(&table->twin_death, NULL, wait_for_death, table);
+}
 
 int	main(int argc, char **argv)
 {
@@ -206,8 +208,7 @@ int	main(int argc, char **argv)
 	if (!table)
 		return (ERROR);
 	init_childs(table);
-	// init_evil_twin(table);
-	sem_wait(table->nuke);
+	init_evil_twins(table);
 	kill_childs(table);
 	destroy_sem();
 	free_all(table);

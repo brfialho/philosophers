@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 21:34:55 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 08:19:05 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 11:02:24 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ t_table	*init_table(int argc, char **argv)
 	gettimeofday(&table->start, NULL);
 	table->nuke = sem_open("/philo_nuke", O_CREAT, 0644, FALSE);
 	table->full = sem_open("/philo_full", O_CREAT, 0644, FALSE);
+	table->everyone_full = sem_open("/philo_every_full", O_CREAT, 0644, FALSE);
+	table->big_nuke = sem_open("/philo_big_nuke", O_CREAT, 0644, FALSE);
 	table->print = sem_open("/philo_print", O_CREAT, 0644, TRUE);
 	table->monitor = sem_open("/philo_monitor", O_CREAT, 0644, TRUE);
 	table->fork = sem_open("/philo_fork", O_CREAT, 0644, table->input[PHILO]);
