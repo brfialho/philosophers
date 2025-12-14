@@ -6,13 +6,13 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 03:36:56 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 03:43:20 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	kill_zombies(int n_pid);
+void	kill_zombies(int pid);
 
 
 int	init_childs(t_table *table)
@@ -24,23 +24,25 @@ int	init_childs(t_table *table)
 	{
 		if (table->is_main)
 			table->pid[i] = fork();
+		// if (table->pid[i] < 0)
+		// 	return (kill_zombies(--i), FALSE);
 		if (!table->pid[i])
+		{
 			table->is_main = FALSE;
-		if (table->pid[i] < 0)
-			return (kill_zombies(i), FALSE);
+			break;
+		}
 	}
-	table->philo.id = i;
+	table->philo.id = ++i;
 	return (TRUE);
 }
 
-int	kill_zombies(int n_pid)
+void	kill_zombies(int n_pid)
 {
 	int	i;
 
 	i = -1;
 	while (++i < n_pid)
 		waitpid(0, NULL, 0);
-	return (TRUE);
 }
 
 void	routine(t_table *table)

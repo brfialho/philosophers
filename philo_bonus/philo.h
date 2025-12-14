@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:48 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 03:02:00 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 03:41:33 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <pthread.h>
 # include <semaphore.h>
 # include <sys/wait.h>
+# include <signal.h>
 
 // Utils
 # define INT_MAX 2147483647
