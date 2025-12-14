@@ -6,7 +6,7 @@
 /*   By: brfialho <brfialho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 11:43:06 by brfialho          #+#    #+#             */
-/*   Updated: 2025/12/14 07:28:01 by brfialho         ###   ########.fr       */
+/*   Updated: 2025/12/14 07:39:01 by brfialho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,48 @@ void	kill_zombies(int n_pid)
 		waitpid(0, NULL, 0);
 }
 
+void	philo_die(t_table *table)
+{
+	sem_wait(table->print);
+	printf(FA RM, get_time(table), table->philo.id);
+	sem_post(table->nuke);
+}
+
+static void	monitor_helper(t_table *table)
+{
+	int	i;
+	int	full_eaten;
+
+	i = -1;
+	full_eaten = 0;
+	while (++i < table->input[PHILO])
+	{
+		if (get_time(table) - table->philo.last_meal > \
+(unsigned long)table->input[STARVE])
+			philo_die(table);
+		// if (table->input[FULL] != -1
+		// 	&& table->philo.eaten >= table->input[FULL])
+		// 	full_eaten++;
+	}
+	// if (full_eaten == table->input[PHILO])
+	// {
+	// 	pthread_mutex_lock(&table->print);
+	// 	printf(HA PPY, get_time(table));
+	// 	pthread_mutex_unlock(&table->print);
+	// 	return (FALSE);
+	// }
+	return ;
+}
+
 void	*monitor(void *table)
 {
 	t_table *t;
-	int	loop;
 
 	t = table;
-	loop = TRUE;
-	while (loop)
+	while (TRUE)
 	{
 		sem_wait(t->monitor);
-		if (t->philo.eaten >= t->input[FULL])
-			sem_post(t->nuke);
+		monitor_helper(t);
 		sem_post(t->monitor);
 		usleep(1000);
 	}
